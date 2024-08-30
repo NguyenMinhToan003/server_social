@@ -1,10 +1,9 @@
 import Joi from 'joi'
 import {
   OBJECT_ID_MESSAGE,
-  OBJECT_ID_REGEX,
-  EMAIL_REGEX,
-  EMAIL_MESSAGE
+  OBJECT_ID_REGEX
 } from '~/utils/validation'
+
 const getUser = async (req, res, next) => {
   const schema = Joi.object({
     id: Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE).required()
@@ -13,28 +12,27 @@ const getUser = async (req, res, next) => {
     await schema.validateAsync(req.params)
     next()
   } catch (error) {
-    throw error
+    next(error)
   }
 }
-const createUser = async (req, res, next) => {
+const updateUser = async (req, res, next) => {
   const schema = Joi.object({
     username: Joi.string().required().min(3).max(50).trim().strict(),
-    email: Joi.string().email().required().min(3).max(50).trim().strict().pattern(EMAIL_REGEX).message(EMAIL_MESSAGE),
+    email: Joi.string().email().required().min(3).max(255).trim().strict(),
     password: Joi.string().required().min(8).max(50).trim().strict(),
-    profile_picture: Joi.string().default(''),
-    friends: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).default([]),
-    posts: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).default([])
+    profile_picture: Joi.string().uri(),
+    bio: Joi.string().max(100),
+    friends: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)),
+    posts: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE))
   })
   try {
-    // abortEarly: false de hien thi tat ca loi
-    await schema.validateAsync(req.body, { abortEarly: false })
+    await schema.validateAsync(req.body)
     next()
   } catch (error) {
-    throw error
+    next(error)
   }
 }
-
 export const userValidation = {
   getUser,
-  createUser
+  updateUser
 }
