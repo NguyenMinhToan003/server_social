@@ -8,17 +8,21 @@ const getUser = async (id) => {
     throw error
   }
 }
-const createUser = async (userData) => {
+const updateUser = async (id, data) => {
   try {
-    const data = {
-      ...userData
+
+    const dataUpdate = {
+      ...data,
+      updatedAt: Date.now()
     }
-    const result = await userModel.createUser(data)
-    return result
+    const user = await userModel.updateUserById(id, dataUpdate)
+
+    return user
+  } catch (error) {
+    throw error
   }
-  catch (error) { throw error }
 }
 export const userService = {
   getUser,
-  createUser
+  updateUser
 }

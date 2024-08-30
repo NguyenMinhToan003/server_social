@@ -3,6 +3,7 @@ import { APIs_V1 } from './routes/v1'
 import { env } from '~/config/environment'
 import { CONNECT_DB } from './config/mongodb'
 import cors from 'cors'
+import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 import { corsOptions } from './config/cors'
 const START_SERVER = () => {
   const app = express()
@@ -10,12 +11,11 @@ const START_SERVER = () => {
   const port = env.LOCAL_PORT
   app.use(express.json())
   app.use('/v1', APIs_V1)
-
+  app.use(errorHandlingMiddleware)
   app.listen(port, () => {
     // eslint-disable-next-line no-console
     console.log(`Server running Production ${port}`)
   })
-
 }
 (async () => {
   try {
