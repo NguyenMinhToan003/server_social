@@ -21,10 +21,11 @@ const register = async (req, res, next) => {
     username: Joi.string().required().min(3).max(50).trim().strict(),
     email: Joi.string().email().required().min(3).max(255).trim().strict(),
     password: Joi.string().required().min(8).max(50).trim().strict(),
-    profile_picture: Joi.string().uri(),
+    profile_picture: Joi.string(),
     bio: Joi.string().max(100),
     friends: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)),
-    posts: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE))
+    posts: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)),
+    room_chats: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE))
   })
   try {
     // abortEarly: false de hien thi tat ca loi

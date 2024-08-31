@@ -11,19 +11,21 @@ const SCHEMA_USER = Joi.object({
   email: Joi.string().email().required().min(3).max(50).trim().strict(),
   password: Joi.string().required().trim().strict(),
   bio: Joi.string().max(100).default(''),
-  profile_picture: Joi.string().default('https://avatars.githubusercontent.com/u/117341351?'),
+  profile_picture: Joi.string().default('https://avatars.githubusercontent.com/u/117341351'),
   friends: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).default([]),
   posts: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).default([]),
+  room_chats: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).default([]),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null)
 })
+const IGNORGEFIELD_USER_CHANGE = ['createdAt', '_id']
+const IGNORGEFIELD_USER_SUBMIT = ['password']
 const getUserById = async (id) => {
   try {
     const user = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
     return user
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error)
+    throw error
   }
 }
 const validateDataUser = async (data) => {
@@ -45,16 +47,30 @@ const updateUserById = async (id, data) => {
     if (findUserByUsername && findUserByUsername._id.toString() !== id) {
       return { error: 'username already exists' }
     }
+    Object.keys(data).forEach(item => {
+      if (IGNORGEFIELD_USER_CHANGE.includes(item))
+        delete data[item]
+    })
+    const posts = data.posts.map(post => new ObjectId(post))
+    const friends = data.friends.map(friend => new ObjectId(friend))
+    data.posts = posts
+    data.friends = friends
     const user = await GET_DB().collection(USER_COLLECTION_NAME).updateOne({ _id: new ObjectId(id) }, { $set: data })
+    Object.keys(user).forEach(item => {
+      if (IGNORGEFIELD_USER_SUBMIT.includes(item)) {
+        delete data[item]
+      }
+    })
     return user
 
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error)
+    throw error
   }
 }
 
 export const userModel = {
+  IGNORGEFIELD_USER_CHANGE,
+  IGNORGEFIELD_USER_SUBMIT,
   SCHEMA_USER,
   existsAccountByEmail,
   existsAccountByUsername,

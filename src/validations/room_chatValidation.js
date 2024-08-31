@@ -1,0 +1,30 @@
+import Joi from 'joi'
+import { OBJECT_ID_REGEX, OBJECT_ID_MESSAGE } from '~/utils/validation'
+const getRoomChat = async (req, res, next) => {
+  const schema = Joi.object({
+    id: Joi.string().required().min(3).max(255).trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)
+  })
+  try {
+    await schema.validateAsync(req.params)
+    next()
+  } catch (error) {
+    next(error)
+  }
+}
+const createRoomChat = async (req, res, next) => {
+  const schema = Joi.object({
+    room_name: Joi.string().required().min(3).max(255).trim().strict(),
+    members: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).required().min(2),
+    note: Joi.string().max(100)
+  })
+  try {
+    await schema.validateAsync(req.body, { abortEarly: false })
+    next()
+  } catch (error) {
+    next(error)
+  }
+}
+export const room_chatValidation = {
+  getRoomChat,
+  createRoomChat
+}

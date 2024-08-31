@@ -23,7 +23,8 @@ const register = async (userData) => {
   try {
     const data = {
       ...userData,
-      password: await hashPassword(userData.password)
+      password: await hashPassword(userData.password),
+      createdAt: new Date()
     }
     const result = await authModel.register(data)
     return result
