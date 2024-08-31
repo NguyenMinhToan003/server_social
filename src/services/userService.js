@@ -10,7 +10,6 @@ const getUser = async (id) => {
 }
 const updateUser = async (id, data) => {
   try {
-
     const dataUpdate = {
       ...data,
       updatedAt: Date.now()

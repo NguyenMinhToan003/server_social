@@ -15,6 +15,11 @@ const login = async (account, password) => {
       return null
     }
     if (comparePassword(password, user.password)) {
+      Object.keys(user).forEach(item => {
+        if (userModel.IGNORGEFIELD_USER_SUBMIT.includes(item)) {
+          delete user[item]
+        }
+      })
       return user
     }
     return null
