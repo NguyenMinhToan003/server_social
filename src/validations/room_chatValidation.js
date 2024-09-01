@@ -2,7 +2,8 @@ import Joi from 'joi'
 import { OBJECT_ID_REGEX, OBJECT_ID_MESSAGE } from '~/utils/validation'
 const getRoomChat = async (req, res, next) => {
   const schema = Joi.object({
-    id: Joi.string().required().min(3).max(255).trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)
+    id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE),
+    user_id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)
   })
   try {
     await schema.validateAsync(req.params)
