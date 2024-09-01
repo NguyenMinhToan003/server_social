@@ -1,7 +1,11 @@
 import { room_chatModel } from '~/models/room_chatModel'
-const getRoomChat = async (id) => {
+import { messageService } from '~/services/messageService'
+const getRoomChat = async (id, userId) => {
   try {
+
     const room_chat = await room_chatModel.getRoomChatById(id)
+    const messages = await messageService.getMessages(id, userId)
+    room_chat.messages = messages
     return room_chat
   } catch (error) {
     throw error

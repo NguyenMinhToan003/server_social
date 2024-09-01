@@ -2,8 +2,8 @@ import { room_chatSevice } from '~/services/room_chatSevice'
 import { StatusCodes } from 'http-status-codes'
 const getRoomChat = async (req, res, next) => {
   try {
-    const { id } = req.params
-    const room_chat = await room_chatSevice.getRoomChat(id)
+    const { id, user_id } = req.params
+    const room_chat = await room_chatSevice.getRoomChat(id, user_id)
     if (room_chat === null) {
       return res.status(StatusCodes.NOT_FOUND).json({ message: 'Room chat not found' })
     }

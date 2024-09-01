@@ -34,11 +34,24 @@ const getRoomChatById = async (id) => {
     throw error
   }
 }
+const checkMemberIsOnRoomChat = async (roomChatId, memberId) => {
+  try {
+    const room_chat = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).findOne(
+      { _id: new ObjectId(roomChatId) })
+    let check = false
+    room_chat.members.forEach(
+      i => { if (i.equals(new ObjectId(memberId))) check = true }
+    )
+    return check
+  }
+  catch (error) {
+    throw error
+  }
+}
 const createRoomChat = async (data) => {
   try {
-    const members = data.members.map(member => new ObjectId(member))
     data = await validationDataRoomChat(data)
-    data.members = members
+    data.members = data.members.map(member => new ObjectId(member))
     return await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).insertOne(data)
   }
   catch (error) {
@@ -48,5 +61,6 @@ const createRoomChat = async (data) => {
 export const room_chatModel = {
   SCHEMA_ROOM_CHAT,
   getRoomChatById,
-  createRoomChat
+  createRoomChat,
+  checkMemberIsOnRoomChat
 }
