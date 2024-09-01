@@ -21,7 +21,6 @@ const getMessages = async (roomChatId) => {
     const messages = await GET_DB().collection(CHAT_COLLECTION_NAME).aggregate([
       { $match: { room_chat_id: new ObjectId(roomChatId) } }
     ]).toArray()
-    console.log(roomChatId)
     return messages
   } catch (error) {
     throw error

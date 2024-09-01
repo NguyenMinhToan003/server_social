@@ -5,7 +5,7 @@ const login = async (req, res, next) => {
     const { account, password } = req.body
     const result = await authService.login(account, password)
     if (result === null) {
-      return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid account or password' })
+      return res.status(StatusCodes.NOT_FOUND).json({ message: 'Invalid account or password' })
     }
     return res.status(StatusCodes.OK).json(result)
   }
