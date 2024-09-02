@@ -23,6 +23,11 @@ const IGNORGEFIELD_USER_SUBMIT = ['password']
 const getUserById = async (id) => {
   try {
     const user = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
+    Object.keys(user).forEach(item => {
+      if (IGNORGEFIELD_USER_SUBMIT.includes(item)) {
+        delete user[item]
+      }
+    })
     return user
   } catch (error) {
     throw error
@@ -67,14 +72,22 @@ const updateUserById = async (id, data) => {
     throw error
   }
 }
-
+const getListUser = async () => {
+  try {
+    const users = await GET_DB().collection(USER_COLLECTION_NAME).find({}).toArray()
+    return users
+  } catch (error) {
+    throw error
+  }
+}
 export const userModel = {
   IGNORGEFIELD_USER_CHANGE,
   IGNORGEFIELD_USER_SUBMIT,
   SCHEMA_USER,
+  USER_COLLECTION_NAME,
   existsAccountByEmail,
   existsAccountByUsername,
   getUserById,
   validateDataUser,
-  updateUserById
+  getListUser
 }

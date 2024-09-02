@@ -3,7 +3,8 @@ import { userController } from '~/controllers/userController'
 import { userValidation } from '~/validations/userValidation'
 const Router = express.Router()
 
-Router.route('/')
+Router.route('/listUser')
+  .get(userController.getListUser)
 Router.route('/:id')
   .get(userValidation.getUser, userController.getUser)
   .put(userValidation.updateUser, userController.updateUser)

@@ -19,7 +19,16 @@ const createRoomChat = async (data) => {
     throw error
   }
 }
+const getListRoomChat = async () => {
+  try {
+    const room_chats = await room_chatModel.getListRoomChat()
+    return room_chats
+  } catch (error) {
+    throw error
+  }
+}
 export const room_chatSevice = {
   getRoomChat,
-  createRoomChat
+  createRoomChat,
+  getListRoomChat
 }

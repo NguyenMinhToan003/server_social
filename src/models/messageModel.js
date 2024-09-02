@@ -2,6 +2,7 @@ import Joi from 'joi'
 import { OBJECT_ID_MESSAGE, OBJECT_ID_REGEX } from '~/utils/validation'
 import { GET_DB } from '~/config/mongodb'
 import { ObjectId } from 'mongodb'
+import { userModel } from './userModel'
 const CHAT_COLLECTION_NAME = 'messages'
 const IGNOREFIELD_CHAT_CHANGE = ['createdAt', '_id']
 const IGNOREFIELD_CHAT_SUBMIT = []
@@ -19,7 +20,28 @@ const validationDataChat = async (data) => {
 const getMessages = async (roomChatId) => {
   try {
     const messages = await GET_DB().collection(CHAT_COLLECTION_NAME).aggregate([
-      { $match: { room_chat_id: new ObjectId(roomChatId) } }
+      { $match: { room_chat_id: new ObjectId(roomChatId) } },
+      {
+        $lookup: {
+          from: userModel.USER_COLLECTION_NAME,
+          localField: 'sender_id',
+          foreignField: '_id',
+          as: 'sender'
+        }
+      },
+      {
+        $project: {
+          sender: {
+            _id: 1,
+            username: 1,
+            profile_picture: 1
+          },
+          message: 1,
+          status: 1,
+          createdAt: 1
+        }
+      }
+
     ]).toArray()
     return messages
   } catch (error) {
@@ -29,7 +51,7 @@ const getMessages = async (roomChatId) => {
 const createMessage = async (data) => {
   try {
     data = await validationDataChat(data)
-    data.sender = new ObjectId(data.sender)
+    data.sender_id = new ObjectId(data.sender_id)
     data.room_chat_id = new ObjectId(data.room_chat_id)
     const chat = await GET_DB().collection(CHAT_COLLECTION_NAME).insertOne(data)
     return chat

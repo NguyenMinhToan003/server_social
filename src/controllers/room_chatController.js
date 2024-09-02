@@ -20,7 +20,16 @@ const createRoomChat = async (req, res, next) => {
     next(error)
   }
 }
+const getListRoomChat = async (req, res, next) => {
+  try {
+    const room_chats = await room_chatSevice.getListRoomChat()
+    return res.status(StatusCodes.OK).json(room_chats)
+  } catch (error) {
+    next(error)
+  }
+}
 export const room_chatController = {
   getRoomChat,
-  createRoomChat
+  createRoomChat,
+  getListRoomChat
 }

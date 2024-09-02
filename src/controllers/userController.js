@@ -26,7 +26,16 @@ const updateUser = async (req, res, next) => {
     throw error
   }
 }
+const getListUser = async (req, res, next) => {
+  try {
+    const users = await userService.getListUser()
+    res.status(StatusCodes.OK).json(users)
+  } catch (error) {
+    throw error
+  }
+}
 export const userController = {
   getUser,
-  updateUser
+  updateUser,
+  getListUser
 }
