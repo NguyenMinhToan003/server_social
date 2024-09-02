@@ -21,7 +21,16 @@ const updateUser = async (id, data) => {
     throw error
   }
 }
+const getListUser = async () => {
+  try {
+    const users = await userModel.getListUser()
+    return users
+  } catch (error) {
+    throw error
+  }
+}
 export const userService = {
   getUser,
-  updateUser
+  updateUser,
+  getListUser
 }

@@ -18,16 +18,7 @@ const validationDataRoomChat = async (data) => {
 const getRoomChatById = async (id) => {
   try {
     const room_chat = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).aggregate([
-      { $match: { _id: new ObjectId(id) } },
-      {
-        $lookup: {
-          from: 'chats',
-          localField: '_id',
-          foreignField: 'room_chat_id',
-          as: 'chats'
-        }
-      }
-    ]).toArray()
+      { $match: { _id: new ObjectId(id) } }]).toArray()
     return room_chat[0]
   }
   catch (error) {
@@ -58,9 +49,32 @@ const createRoomChat = async (data) => {
     throw error
   }
 }
+const findRoomChatOnlyBothMember = async (member1, member2) => {
+  try {
+    const room_chat = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).findOne({
+      members: { $all: [new ObjectId(member1), new ObjectId(member2)] }
+    })
+    console.log(room_chat)
+    return room_chat
+  }
+  catch (error) {
+    throw error
+  }
+}
+const getListRoomChat = async () => {
+  try {
+    const room_chats = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).find({}).toArray()
+    return room_chats
+  }
+  catch (error) {
+    throw error
+  }
+}
 export const room_chatModel = {
   SCHEMA_ROOM_CHAT,
   getRoomChatById,
   createRoomChat,
-  checkMemberIsOnRoomChat
+  checkMemberIsOnRoomChat,
+  findRoomChatOnlyBothMember,
+  getListRoomChat
 }
