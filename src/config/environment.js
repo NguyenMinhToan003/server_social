@@ -9,5 +9,7 @@ export const env = {
   APP_HOST: process.env.APP_HOST,
   APP_PORT: process.env.APP_PORT,
   LOCAL_PORT: process.env.LOCAL_PORT,
-  BUILD_MODE: process.env.BUILD_MODE || 'prod'
+  BUILD_MODE: process.env.BUILD_MODE || 'prod',
+  SIGN_SECRET: process.env.SIGN_SECRET,
+  EXPIRES_IN: process.env.EXPIRES_IN
 }

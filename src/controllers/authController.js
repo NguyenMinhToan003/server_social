@@ -1,5 +1,6 @@
 import { authService } from '~/services/authService.js'
 import { StatusCodes } from 'http-status-codes'
+import { createToken } from '~/middlewares/jwt'
 const login = async (req, res, next) => {
   try {
     const { account, password } = req.body
@@ -7,6 +8,9 @@ const login = async (req, res, next) => {
     if (result === null) {
       return res.status(StatusCodes.NOT_FOUND).json({ message: 'Invalid account or password' })
     }
+    const token = createToken(result)
+    result.token = token
+    res.cookie('token', token, { httpOnly: true })
     return res.status(StatusCodes.OK).json(result)
   }
   catch (error) {

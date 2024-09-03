@@ -7,6 +7,7 @@ import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 import { corsOptions } from './config/cors'
 import http from 'http'
 import { Server } from 'socket.io'
+
 const START_SERVER = () => {
   const app = express()
   const port = env.LOCAL_PORT
@@ -15,19 +16,32 @@ const START_SERVER = () => {
   app.use(express.json())
   app.use('/v1', APIs_V1)
   app.use(errorHandlingMiddleware)
-
   const server = http.createServer(app)
   const io = new Server(server, {
     cors: {
-      origin: 'http://localhost:5173',
+      origin: `${env.APP_PORT}`,
       methods: ['GET', 'POST']
     }
   })
   const onlineUsers = []
   io.on('connection', (socket) => {
     console.log('New client connected', socket.id)
-    onlineUsers.push(socket.id)
-    console.log('Online users:', onlineUsers)
+    socket.on('room_signature', (id) => {
+      socket.join(id)
+    })
+    socket.on('online', (id) => {
+      const index = onlineUsers.indexOf(id)
+      if (index === -1)
+        onlineUsers.push(id)
+      console.log('Online users:', onlineUsers)
+    })
+    socket.on('offline', (id) => {
+      socket.leave(id)
+      const index = onlineUsers.indexOf(id)
+      if (index !== -1) {
+        onlineUsers.splice(index, 1)
+      }
+    })
     socket.on('join_room', (data) => {
       console.log('Joining room:', data)
       socket.join(data)
