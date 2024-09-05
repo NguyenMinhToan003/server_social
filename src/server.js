@@ -71,6 +71,13 @@ const START_SERVER = () => {
       console.log('Notification:', data)
       socket.to(data.sender.user_id).emit('notification', data)
     })
+
+    socket.on('send_comment', (data) => {
+      console.log('Comment:', data)
+      console.log('Post ID:', data.post_id)
+      io.to(data.post_id).emit('receive_comment', data)
+    })
+
     socket.on('disconnect', () => {
       console.log('Client disconnected', socket.id)
       const index = onlineUsers.indexOf(socket.id)
