@@ -26,20 +26,7 @@ const findAll = async () => {
         }
       },
       {
-        $lookup: {
-          from: 'comments',
-          localField: 'comment_ids',
-          foreignField: '_id',
-          as: 'comments'
-        }
-      },
-      {
-        $lookup: {
-          from: 'likes',
-          localField: 'like_ids',
-          foreignField: '_id',
-          as: 'likes'
-        }
+        $sort: { createdAt: -1 }
       },
       {
         $project: {

@@ -1,8 +1,8 @@
 import { postModel } from '~/models/postModel'
-
 const getPosts = async () => {
   try {
-    const posts = await postModel.findAll()
+    let posts = await postModel.findAll()
+    posts.map(post => post.likes = [])
     return posts
   }
   catch (error) {
