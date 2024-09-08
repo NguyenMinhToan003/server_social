@@ -11,6 +11,7 @@ const POSTSCHEMA = Joi.object({
   media: Joi.array().items(Joi.string()).default([]),
   comment_ids: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).default([]),
   like_ids: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).default([]),
+  status: Joi.string().valid('private', 'published').default('published'),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null)
 })
@@ -36,6 +37,7 @@ const findAll = async () => {
           media: 1,
           comments: 1,
           likes: 1,
+          status: 1,
           createdAt: 1,
           updatedAt: 1,
           'author._id': 1,

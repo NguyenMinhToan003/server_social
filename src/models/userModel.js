@@ -73,9 +73,35 @@ const updateUserById = async (id, data) => {
   }
 }
 const getListUser = async () => {
+  // temp
   try {
-    const users = await GET_DB().collection(USER_COLLECTION_NAME).find({}).toArray()
+    let users = await GET_DB().collection(USER_COLLECTION_NAME).find(
+      {}
+    ).toArray()
     return users
+  } catch (error) {
+    throw error
+  }
+}
+const getFriends = async (id) => {
+  try {
+    const user = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
+    const friends = await GET_DB().collection(USER_COLLECTION_NAME).find(
+      {
+        _id: { $in: user.friends }
+      },
+      {
+        projection: {
+          password: 0,
+          createdAt: 0,
+          updatedAt: 0,
+          friends: 0,
+          posts: 0,
+          room_chats: 0,
+          bio: 0
+        }
+      }).toArray()
+    return friends
   } catch (error) {
     throw error
   }
@@ -89,5 +115,6 @@ export const userModel = {
   existsAccountByUsername,
   getUserById,
   validateDataUser,
-  getListUser
+  getListUser,
+  getFriends
 }

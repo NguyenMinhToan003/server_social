@@ -10,7 +10,7 @@ const getUser = async (req, res, next) => {
     }
     res.status(StatusCodes.OK).json(user)
   } catch (error) {
-    throw error
+    next(error)
   }
 }
 const updateUser = async (req, res, next) => {
@@ -23,7 +23,7 @@ const updateUser = async (req, res, next) => {
     }
     res.status(StatusCodes.OK).json(result)
   } catch (error) {
-    throw error
+    next(error)
   }
 }
 const getListUser = async (req, res, next) => {
@@ -31,11 +31,21 @@ const getListUser = async (req, res, next) => {
     const users = await userService.getListUser()
     res.status(StatusCodes.OK).json(users)
   } catch (error) {
-    throw error
+    next(error)
+  }
+}
+const getFriends = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const friends = await userService.getFriends(id)
+    res.status(StatusCodes.OK).json(friends)
+  } catch (error) {
+    next(error)
   }
 }
 export const userController = {
   getUser,
   updateUser,
-  getListUser
+  getListUser,
+  getFriends
 }

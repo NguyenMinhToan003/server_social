@@ -22,7 +22,8 @@ const createRoomChat = async (req, res, next) => {
 }
 const getListRoomChat = async (req, res, next) => {
   try {
-    const room_chats = await room_chatSevice.getListRoomChat()
+    const { id } = req.params
+    const room_chats = await room_chatSevice.getListRoomChat(id)
     return res.status(StatusCodes.OK).json(room_chats)
   } catch (error) {
     next(error)
