@@ -25,6 +25,7 @@ const START_SERVER = () => {
   })
   const onlineUsers = []
   io.on('connection', (socket) => {
+    const typingUsers = []
     console.log('New client connected', socket.id)
     socket.on('room_signature', (id) => {
       socket.join(id)
@@ -41,6 +42,18 @@ const START_SERVER = () => {
       if (index !== -1) {
         onlineUsers.splice(index, 1)
       }
+    })
+    socket.on('typing', (data) => {
+      console.log('Typing:', data)
+      typingUsers.push(data)
+      io.to(data.room).emit('typing', typingUsers)
+    })
+    socket.on('untyping', (data) => {
+      const index = typingUsers.findIndex((user) => user.user_id === data.user_id)
+      if (index !== -1) {
+        typingUsers.splice(index, 1)
+      }
+      io.to(data.room).emit('typing', typingUsers)
     })
     socket.on('join_room', (data) => {
       console.log('Joining room:', data)

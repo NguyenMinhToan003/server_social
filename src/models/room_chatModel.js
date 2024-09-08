@@ -1,11 +1,14 @@
 import Joi from 'joi'
 import { ObjectId } from 'mongodb'
+import { userModel } from './userModel'
 import { GET_DB } from '~/config/mongodb'
 import { OBJECT_ID_REGEX, OBJECT_ID_MESSAGE } from '~/utils/validation'
 const ROOM_CHAT_COLLECTION_NAME = 'room_chats'
 const SCHEMA_ROOM_CHAT = Joi.object({
   room_name: Joi.string().required().min(3).max(255).trim().strict(),
   members: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).required(),
+  // private is both member can chat, group is all member can chat
+  type: Joi.string().valid('group', 'private').default('private'),
   note: Joi.string().max(100).default('Wellcome to room chat'),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null)
@@ -19,6 +22,7 @@ const getRoomChatById = async (id) => {
   try {
     const room_chat = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).aggregate([
       { $match: { _id: new ObjectId(id) } }]).toArray()
+    if (room_chat.length === 0) return null
     return room_chat[0]
   }
   catch (error) {
@@ -30,7 +34,7 @@ const checkMemberIsOnRoomChat = async (roomChatId, memberId) => {
     const room_chat = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).findOne(
       { _id: new ObjectId(roomChatId) })
     let check = false
-    room_chat.members.forEach(
+    room_chat?.members?.forEach(
       i => { if (i.equals(new ObjectId(memberId))) check = true }
     )
     return check
@@ -61,9 +65,11 @@ const findRoomChatOnlyBothMember = async (member1, member2) => {
     throw error
   }
 }
-const getListRoomChat = async () => {
+const getListRoomChat = async (userId) => {
   try {
-    const room_chats = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).find({}).toArray()
+    const room_chats = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).aggregate([
+      { $match: { members: { $all: [new ObjectId(userId)] } } }
+    ]).toArray()
     return room_chats
   }
   catch (error) {

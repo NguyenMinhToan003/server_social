@@ -2,15 +2,17 @@ import { messageModel } from '~/models/messageModel'
 import { room_chatModel } from '~/models/room_chatModel'
 const getMessages = async (roomChatId, userId) => {
   try {
+    const messages = await messageModel.getMessages(roomChatId)
+    console.log(messages)
+    if (messages === null) {
+      return { error: 'Error while getting chat' }
+    }
     const checkMemberIsOnRoomChat =
       await room_chatModel.checkMemberIsOnRoomChat(roomChatId, userId)
     if (!checkMemberIsOnRoomChat) {
       return { error: 'You are not a member of this chat' }
     }
-    const messages = await messageModel.getMessages(roomChatId)
-    if (messages === null) {
-      return { error: 'Error while getting chat' }
-    }
+
     return messages
   }
   catch (error) {

@@ -17,7 +17,11 @@ const createPost = async (req, res, next) => {
     next(error)
   }
 }
+const updatePost = async (req, res, next) => {
+  return res.status(StatusCodes.NOT_IMPLEMENTED).send('updatePost in postController is not implemented')
+}
 export const postController = {
   getPosts,
-  createPost
+  createPost,
+  updatePost
 }

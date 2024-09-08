@@ -4,6 +4,9 @@ const getRoomChat = async (id, userId) => {
   try {
 
     const room_chat = await room_chatModel.getRoomChatById(id)
+    if (room_chat === null) {
+      return null
+    }
     const messages = await messageService.getMessages(id, userId)
     room_chat.messages = messages
     return room_chat
@@ -19,9 +22,9 @@ const createRoomChat = async (data) => {
     throw error
   }
 }
-const getListRoomChat = async () => {
+const getListRoomChat = async (userId) => {
   try {
-    const room_chats = await room_chatModel.getListRoomChat()
+    const room_chats = await room_chatModel.getListRoomChat(userId)
     return room_chats
   } catch (error) {
     throw error
