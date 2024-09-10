@@ -37,9 +37,22 @@ const getFriends = async (id) => {
     throw error
   }
 }
+const addFriend = async (id, friend_id) => {
+  try {
+    const result = await userModel.addFriend(id, friend_id)
+    if (result === null) {
+      return { error: 'acction failed' }
+    }
+    return { message: 'add friend success' }
+  }
+  catch (error) {
+    throw error
+  }
+}
 export const userService = {
   getUser,
   updateUser,
   getListUser,
-  getFriends
+  getFriends,
+  addFriend
 }

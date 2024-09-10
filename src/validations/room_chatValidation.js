@@ -17,6 +17,7 @@ const createRoomChat = async (req, res, next) => {
   const schema = Joi.object({
     room_name: Joi.string().required().min(3).max(255).trim().strict(),
     members: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).required().min(2),
+    avatarRoom: Joi.string().trim().strict(),
     type: Joi.string().valid('group', 'private'),
     note: Joi.string().max(100)
   })

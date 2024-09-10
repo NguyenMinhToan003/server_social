@@ -33,7 +33,23 @@ const updateUser = async (req, res, next) => {
     next(error)
   }
 }
+const addFriend = async (req, res, next) => {
+  const schemaParam = Joi.object({
+    id: Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE).required()
+  })
+  const schemaBody = Joi.object({
+    friend_id: Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE).required()
+  })
+  try {
+    await schemaParam.validateAsync(req.params)
+    await schemaBody.validateAsync(req.body)
+    next()
+  } catch (error) {
+    next(error)
+  }
+}
 export const userValidation = {
   getUser,
-  updateUser
+  updateUser,
+  addFriend
 }
