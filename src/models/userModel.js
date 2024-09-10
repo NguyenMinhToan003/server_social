@@ -106,6 +106,28 @@ const getFriends = async (id) => {
     throw error
   }
 }
+const addFriend = async (id, friend_id) => {
+  try {
+    const user1 = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
+    const user2 = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ _id: new ObjectId(friend_id) })
+    // khong co user , da co , trung nhau
+    const user1FriendString = user1.friends.map(friend => friend.toString())
+    const user2FriendString = user2.friends.map(friend => friend.toString())
+
+    if (!user1 || !user2
+      || user1FriendString.includes(user2._id.toString())
+      || user2FriendString.includes(user1._id.toString())
+      || id === friend_id) {
+      return null
+    }
+    await GET_DB().collection(USER_COLLECTION_NAME).updateOne({ _id: user1._id }, { $push: { friends: user2._id } })
+    await GET_DB().collection(USER_COLLECTION_NAME).updateOne({ _id: user2._id }, { $push: { friends: user1._id } })
+    return true
+  }
+  catch (error) {
+    throw error
+  }
+}
 export const userModel = {
   IGNORGEFIELD_USER_CHANGE,
   IGNORGEFIELD_USER_SUBMIT,
@@ -116,5 +138,6 @@ export const userModel = {
   getUserById,
   validateDataUser,
   getListUser,
-  getFriends
+  getFriends,
+  addFriend
 }

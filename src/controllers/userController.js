@@ -43,9 +43,23 @@ const getFriends = async (req, res, next) => {
     next(error)
   }
 }
+const addFriend = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const { friend_id } = req.body
+    const result = await userService.addFriend(id, friend_id)
+    if (result.error) {
+      return res.status(StatusCodes.BAD_REQUEST).json(result)
+    }
+    res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
 export const userController = {
   getUser,
   updateUser,
   getListUser,
-  getFriends
+  getFriends,
+  addFriend
 }
