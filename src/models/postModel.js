@@ -8,6 +8,7 @@ const POSTSCHEMA = Joi.object({
   author_id: Joi.string().required().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE),
   title: Joi.string().required().min(3).max(100).default(''),
   content: Joi.string().default(''),
+  hastag: Joi.array().items(Joi.string()).default([]),
   media: Joi.array().items(Joi.string()).default([]),
   comment_ids: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).default([]),
   like_ids: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).default([]),

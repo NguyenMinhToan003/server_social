@@ -13,6 +13,7 @@ const createPost = async (post) => {
   try {
     const data = {
       ...post,
+      hastag: post.hastag.split(/[ ,]+/),
       comment_ids: [],
       like_ids: [],
       createdAt: new Date()

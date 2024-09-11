@@ -11,7 +11,12 @@ const getPosts = async (req, res, next) => {
 }
 const createPost = async (req, res, next) => {
   try {
-    const result = await postService.createPost(req.body)
+    const files = req.files || []
+    const data = {
+      ...req.body,
+      media: files.map((file) => file.path)
+    }
+    const result = await postService.createPost(data)
     return res.status(StatusCodes.CREATED).json(result)
   } catch (error) {
     next(error)

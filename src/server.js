@@ -7,15 +7,23 @@ import { errorHandlingMiddleware } from '~/middlewares/errorHandlingMiddleware'
 import { corsOptions } from './config/cors'
 import http from 'http'
 import { Server } from 'socket.io'
+import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
 
 const START_SERVER = () => {
   const app = express()
   const port = env.LOCAL_PORT
 
   app.use(cors(corsOptions))
+
+  app.use(bodyParser.json())
+  app.use(bodyParser.urlencoded({ extended: true }))
+  app.use(cookieParser())
   app.use(express.json())
+
   app.use('/v1', APIs_V1)
   app.use(errorHandlingMiddleware)
+
   const server = http.createServer(app)
   const io = new Server(server, {
     cors: {
