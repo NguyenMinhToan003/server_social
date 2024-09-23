@@ -13,9 +13,7 @@ import cookieParser from 'cookie-parser'
 const START_SERVER = () => {
   const app = express()
   const port = env.LOCAL_PORT
-
   app.use(cors(corsOptions))
-
   app.use(bodyParser.json())
   app.use(bodyParser.urlencoded({ extended: true }))
   app.use(cookieParser())

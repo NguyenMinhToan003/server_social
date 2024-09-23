@@ -5,6 +5,8 @@ const Router = express.Router()
 
 Router.route('/listUser')
   .get(userController.getListUser)
+Router.route('/search/:q')
+  .get(userController.searchUser)
 Router.route('/friends/:id')
   .get(userController.getFriends)
   .post(userValidation.addFriend, userController.addFriend)

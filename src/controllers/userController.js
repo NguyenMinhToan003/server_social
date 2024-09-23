@@ -56,10 +56,20 @@ const addFriend = async (req, res, next) => {
     next(error)
   }
 }
+const searchUser = async (req, res, next) => {
+  try {
+    const { q } = req.params
+    const users = await userService.searchUser(q)
+    res.status(StatusCodes.OK).json(users)
+  } catch (error) {
+    next(error)
+  }
+}
 export const userController = {
   getUser,
   updateUser,
   getListUser,
   getFriends,
-  addFriend
+  addFriend,
+  searchUser
 }

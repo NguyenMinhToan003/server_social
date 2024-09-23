@@ -63,7 +63,7 @@ const updateUserById = async (id, data) => {
     const user = await GET_DB().collection(USER_COLLECTION_NAME).updateOne({ _id: new ObjectId(id) }, { $set: data })
     Object.keys(user).forEach(item => {
       if (IGNORGEFIELD_USER_SUBMIT.includes(item)) {
-        delete data[item]
+        delete user[item]
       }
     })
     return user
@@ -78,8 +78,48 @@ const getListUser = async () => {
     let users = await GET_DB().collection(USER_COLLECTION_NAME).find(
       {}
     ).toArray()
+    users.forEach(user => {
+      Object.keys(user).forEach(item => {
+        console.log(user)
+        if (IGNORGEFIELD_USER_SUBMIT.includes(item)) {
+          delete user[item]
+        }
+      })
+    })
     return users
+
   } catch (error) {
+    throw error
+  }
+}
+const searchUser = async (q) => {
+  try {
+    console.log(q)
+    const listUserMatch = await GET_DB().collection(USER_COLLECTION_NAME).aggregate(
+      [
+        {
+          $match: {
+            $or: [
+              { username: { $regex: q, $options: 'i' } },
+              { email: { $regex: q, $options: 'i' } }
+            ]
+          }
+        },
+        {
+          $project: {
+            'password': 0,
+            'posts': 0,
+            'room_chats': 0,
+            'createdAt': 0,
+            'updatedAt': 0
+          }
+        }
+      ]
+    ).toArray()
+    return listUserMatch
+
+  }
+  catch (error) {
     throw error
   }
 }
@@ -139,5 +179,6 @@ export const userModel = {
   validateDataUser,
   getListUser,
   getFriends,
-  addFriend
+  addFriend,
+  searchUser
 }
