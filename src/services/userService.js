@@ -49,10 +49,19 @@ const addFriend = async (id, friend_id) => {
     throw error
   }
 }
+const searchUser = async (q) => {
+  try {
+    const listUser = await userModel.searchUser(q)
+    return listUser
+  } catch (error) {
+    throw error
+  }
+}
 export const userService = {
   getUser,
   updateUser,
   getListUser,
   getFriends,
-  addFriend
+  addFriend,
+  searchUser
 }
