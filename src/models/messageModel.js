@@ -60,6 +60,8 @@ const createMessage = async (data) => {
   }
 }
 export const messageModel = {
+  IGNOREFIELD_CHAT_CHANGE,
+  IGNOREFIELD_CHAT_SUBMIT,
   CHAT_COLLECTION_NAME,
   createMessage,
   getMessages

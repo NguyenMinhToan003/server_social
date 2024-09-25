@@ -3,7 +3,7 @@ import { room_chatModel } from '~/models/room_chatModel'
 const getMessages = async (roomChatId, userId) => {
   try {
     const messages = await messageModel.getMessages(roomChatId)
-    console.log(messages)
+    await room_chatModel.updateRoomChat(roomChatId, { isRemove: false })
     if (messages === null) {
       return { error: 'Error while getting chat' }
     }

@@ -22,7 +22,10 @@ const validationDataRoomChat = async (data) => {
 const getRoomChatById = async (id) => {
   try {
     const room_chat = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).aggregate([
-      { $match: { _id: new ObjectId(id) } }]).toArray()
+      {
+        $match: { _id: new ObjectId(id) }
+      }
+    ]).toArray()
     if (room_chat.length === 0) return null
     return room_chat[0]
   }
@@ -101,8 +104,22 @@ const removeRoomChat = async (id, userId) => {
     throw error
   }
 }
+const updateRoomChat = async (id, data) => {
+  try {
+    console.log(data)
+    const result = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).updateOne(
+      { _id: new ObjectId(id) },
+      { $set: data }
+    )
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
 export const room_chatModel = {
   SCHEMA_ROOM_CHAT,
+  updateRoomChat,
   getRoomChatById,
   createRoomChat,
   checkMemberIsOnRoomChat,
