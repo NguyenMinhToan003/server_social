@@ -68,9 +68,19 @@ const findOrCreateRoomChatBothMember = async (member1, member2) => {
     throw error
   }
 }
+const removeRoomChat = async (id, userId) => {
+  try {
+    const result = await room_chatModel.removeRoomChat(id, userId)
+    return result
+  }
+  catch (error) {
+    throw error
+  }
+}
 export const room_chatSevice = {
   getRoomChat,
   createRoomChat,
   getListRoomChat,
-  findOrCreateRoomChatBothMember
+  findOrCreateRoomChatBothMember,
+  removeRoomChat
 }

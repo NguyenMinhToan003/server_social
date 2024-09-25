@@ -2,7 +2,6 @@ import Joi from 'joi'
 import { ObjectId } from 'mongodb'
 import { GET_DB } from '~/config/mongodb'
 import { OBJECT_ID_REGEX, OBJECT_ID_MESSAGE } from '~/utils/validation'
-import { userModel } from './userModel'
 const ROOM_CHAT_COLLECTION_NAME = 'room_chats'
 const SCHEMA_ROOM_CHAT = Joi.object({
   room_name: Joi.string().required().min(3).max(255).trim().strict(),
@@ -11,6 +10,7 @@ const SCHEMA_ROOM_CHAT = Joi.object({
   // private is both member can chat, group is all member can chat
   type: Joi.string().valid('group', 'private').default('group'),
   note: Joi.string().max(100).default('Wellcome to room chat'),
+  isRemove: Joi.boolean().default(false),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null)
 })
@@ -70,9 +70,32 @@ const findRoomChatPrivateBothMember = async (member1, member2) => {
 const getListRoomChat = async (userId) => {
   try {
     const room_chats = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).aggregate([
-      { $match: { members: { $all: [new ObjectId(userId)] } } }
+      {
+        $match:
+        {
+          members: { $all: [new ObjectId(userId)] },
+          isRemove: false
+        }
+      }
     ]).toArray()
     return room_chats
+  }
+  catch (error) {
+    throw error
+  }
+}
+const removeRoomChat = async (id, userId) => {
+  try {
+    const roomchat = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
+    if (roomchat === null && roomchat.type === 'private') return null
+    const roleUser = roomchat.members.some(member => member.equals(new ObjectId(userId)))
+    if (roleUser) {
+      return await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).updateOne(
+        { _id: new ObjectId(id) },
+        { $set: { isRemove: true } }
+      )
+    }
+    return null
   }
   catch (error) {
     throw error
@@ -84,5 +107,6 @@ export const room_chatModel = {
   createRoomChat,
   checkMemberIsOnRoomChat,
   findRoomChatPrivateBothMember,
-  getListRoomChat
+  getListRoomChat,
+  removeRoomChat
 }
