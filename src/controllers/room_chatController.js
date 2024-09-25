@@ -32,8 +32,18 @@ const getListRoomChat = async (req, res, next) => {
     next(error)
   }
 }
+const removeRoomChat = async (req, res, next) => {
+  try {
+    const { id, user_id } = req.body
+    const result = await room_chatSevice.removeRoomChat(id, user_id)
+    return res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
 export const room_chatController = {
   getRoomChat,
   createRoomChat,
-  getListRoomChat
+  getListRoomChat,
+  removeRoomChat
 }
