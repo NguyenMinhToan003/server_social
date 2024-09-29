@@ -22,7 +22,9 @@ const IGNORGEFIELD_USER_CHANGE = ['createdAt', '_id']
 const IGNORGEFIELD_USER_SUBMIT = ['password']
 const getUserById = async (id) => {
   try {
+
     const user = await GET_DB().collection(USER_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
+    if (!user) return null
     Object.keys(user).forEach(item => {
       if (IGNORGEFIELD_USER_SUBMIT.includes(item)) {
         delete user[item]
