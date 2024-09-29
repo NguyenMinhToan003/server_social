@@ -41,8 +41,10 @@ const getMessages = async (roomChatId) => {
           createdAt: 1
         }
       }
-
     ]).toArray()
+    messages.map(message => {
+      message.status === 'deleted' && (message.message = 'This message has been deleted')
+    })
     return messages
   } catch (error) {
     throw error
@@ -59,10 +61,23 @@ const createMessage = async (data) => {
     throw error
   }
 }
+const removeMessageById = async (id) => {
+  try {
+    console.log(id)
+    return await GET_DB().collection(CHAT_COLLECTION_NAME).updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { status: 'deleted' } }
+    )
+  }
+  catch (error) {
+    throw error
+  }
+}
 export const messageModel = {
   IGNOREFIELD_CHAT_CHANGE,
   IGNOREFIELD_CHAT_SUBMIT,
   CHAT_COLLECTION_NAME,
   createMessage,
-  getMessages
+  getMessages,
+  removeMessageById
 }
