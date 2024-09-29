@@ -2,6 +2,7 @@ import Joi from 'joi'
 import { ObjectId } from 'mongodb'
 import { GET_DB } from '~/config/mongodb'
 import { OBJECT_ID_REGEX, OBJECT_ID_MESSAGE } from '~/utils/validation'
+import { messageModel } from '~/models/messageModel'
 const ROOM_CHAT_COLLECTION_NAME = 'room_chats'
 const SCHEMA_ROOM_CHAT = Joi.object({
   room_name: Joi.string().required().min(3).max(255).trim().strict(),
@@ -93,10 +94,8 @@ const removeRoomChat = async (id, userId) => {
     if (roomchat === null && roomchat.type === 'private') return null
     const roleUser = roomchat.members.some(member => member.equals(new ObjectId(userId)))
     if (roleUser) {
-      return await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).updateOne(
-        { _id: new ObjectId(id) },
-        { $set: { isRemove: true } }
-      )
+      const listMessagesId = await GET_DB().collection(messageModel.CHAT_COLLECTION_NAME).deleteMany({ room_chat_id: new ObjectId(id) })
+      return listMessagesId
     }
     return null
   }
