@@ -1,6 +1,5 @@
 import { room_chatSevice } from '~/services/room_chatSevice'
 import { StatusCodes } from 'http-status-codes'
-import { userModel } from '~/models/userModel'
 const getRoomChat = async (req, res, next) => {
   try {
     const { id, user_id } = req.params
@@ -8,7 +7,7 @@ const getRoomChat = async (req, res, next) => {
     if (room_chat === null) {
       room_chat = await room_chatSevice.findOrCreateRoomChatBothMember(id, user_id)
       if (room_chat === null)
-        return res.status(StatusCodes.NOT_FOUND).json({ message: 'Room chat not found' })
+        return res.status(StatusCodes.NOT_FOUND).json({ error: 'Room chat not found' })
     }
     return res.status(StatusCodes.OK).json(room_chat)
   } catch (error) {

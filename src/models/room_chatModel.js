@@ -91,9 +91,10 @@ const getListRoomChat = async (userId) => {
 const removeRoomChat = async (id, userId) => {
   try {
     const roomchat = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
-    if (roomchat === null && roomchat.type === 'private') return null
+    if (roomchat === null || roomchat.type === 'private') return null
     const roleUser = roomchat.members.some(member => member.equals(new ObjectId(userId)))
     if (roleUser) {
+      await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).deleteOne({ _id: new ObjectId(id) })
       const listMessagesId = await GET_DB().collection(messageModel.CHAT_COLLECTION_NAME).deleteMany({ room_chat_id: new ObjectId(id) })
       return listMessagesId
     }
@@ -105,7 +106,6 @@ const removeRoomChat = async (id, userId) => {
 }
 const updateRoomChat = async (id, data) => {
   try {
-    console.log(data)
     const result = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).updateOne(
       { _id: new ObjectId(id) },
       { $set: data }
