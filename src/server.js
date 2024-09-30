@@ -42,6 +42,12 @@ const START_SERVER = () => {
         onlineUsers.push(id)
       console.log('Online users:', onlineUsers)
     })
+
+    socket.on('removeMessage', (data) => {
+      console.log('Remove message:', data)
+      io.to(data.room).emit('removeMessage', data)
+    })
+
     socket.on('offline', (id) => {
       socket.leave(id)
       const index = onlineUsers.indexOf(id)

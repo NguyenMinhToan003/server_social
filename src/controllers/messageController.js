@@ -22,7 +22,20 @@ const createMessage = async (req, res, next) => {
     next(error)
   }
 }
+const removeMessageById = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const result = await messageService.removeMessageById(id)
+    if (result.error)
+      return res.status(StatusCodes.BAD_REQUEST).json(result)
+    return res.status(StatusCodes.OK).json(result)
+  }
+  catch (error) {
+    next(error)
+  }
+}
 export const messageController = {
   getMessages,
-  createMessage
+  createMessage,
+  removeMessageById
 }

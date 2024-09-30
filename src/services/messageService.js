@@ -39,7 +39,19 @@ const createMessage = async (messageData) => {
     throw error
   }
 }
+const removeMessageById = async (id) => {
+  try {
+    const chat = await messageModel.removeMessageById(id)
+    if (chat === null)
+      return { error: 'Error while removing chat' }
+    return chat
+  }
+  catch (error) {
+    throw error
+  }
+}
 export const messageService = {
   getMessages,
-  createMessage
+  createMessage,
+  removeMessageById
 }
