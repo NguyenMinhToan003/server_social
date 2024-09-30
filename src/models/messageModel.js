@@ -63,7 +63,6 @@ const createMessage = async (data) => {
 }
 const removeMessageById = async (id) => {
   try {
-    console.log(id)
     return await GET_DB().collection(CHAT_COLLECTION_NAME).updateOne(
       { _id: new ObjectId(id) },
       { $set: { status: 'deleted' } }

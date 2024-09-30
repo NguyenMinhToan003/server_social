@@ -7,5 +7,6 @@ Router.route('/')
 
 Router.route('/:room_chat_id&&:user_id')
   .get(messageValidation.getMessages, messageController.getMessages)
-
+Router.route('/:id')
+  .put(messageValidation.removeMessageById, messageController.removeMessageById)
 export const messageRoute = Router

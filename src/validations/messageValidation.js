@@ -26,7 +26,21 @@ const createMessage = async (req, res, next) => {
     next(error)
   }
 }
+const removeMessageById = async (req, res, next) => {
+  const schema = Joi.object({
+    id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)
+  })
+  try {
+    await schema.validateAsync(req.params)
+    next()
+  }
+  catch (error) {
+    next(error)
+  }
+}
+
 export const messageValidation = {
   getMessages,
-  createMessage
+  createMessage,
+  removeMessageById
 }
