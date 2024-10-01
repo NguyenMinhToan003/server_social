@@ -48,8 +48,34 @@ const addFriend = async (req, res, next) => {
     next(error)
   }
 }
+const searchUser = async (req, res, next) => {
+  const schema = Joi.object({
+    ids: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).required()
+  })
+  try {
+    await schema.validateAsync(req.body)
+    next()
+  }
+  catch (error) {
+    next(error)
+  }
+}
+const searchUserByListId = async (req, res, next) => {
+  const schema = Joi.object({
+    ids: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).required()
+  })
+  try {
+    await schema.validateAsync(req.body)
+    next()
+  }
+  catch (error) {
+    next(error)
+  }
+}
 export const userValidation = {
   getUser,
   updateUser,
-  addFriend
+  addFriend,
+  searchUser,
+  searchUserByListId
 }

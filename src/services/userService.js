@@ -57,11 +57,21 @@ const searchUser = async (q) => {
     throw error
   }
 }
+const searchUserByListId = async (ids) => {
+  try {
+    const listUser = await userModel.searchUserByListId(ids)
+    return listUser
+  }
+  catch (error) {
+    throw error
+  }
+}
 export const userService = {
   getUser,
   updateUser,
   getListUser,
   getFriends,
   addFriend,
-  searchUser
+  searchUser,
+  searchUserByListId
 }

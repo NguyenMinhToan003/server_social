@@ -5,8 +5,12 @@ const Router = express.Router()
 
 Router.route('/listUser')
   .get(userController.getListUser)
+
 Router.route('/search/:q')
+  // search by username or email
   .get(userController.searchUser)
+  // search by list id
+  .post(userValidation.searchUserByListId, userController.searchUserByListId)
 Router.route('/friends/:id')
   .get(userController.getFriends)
   .post(userValidation.addFriend, userController.addFriend)
