@@ -65,11 +65,22 @@ const searchUser = async (req, res, next) => {
     next(error)
   }
 }
+const searchUserByListId = async (req, res, next) => {
+  try {
+    const { ids } = req.body
+    const users = await userService.searchUserByListId(ids)
+    res.status(StatusCodes.OK).json(users)
+  }
+  catch (error) {
+    next(error)
+  }
+}
 export const userController = {
   getUser,
   updateUser,
   getListUser,
   getFriends,
   addFriend,
-  searchUser
+  searchUser,
+  searchUserByListId
 }

@@ -16,7 +16,7 @@ const createMessage = async (req, res, next) => {
   const schema = Joi.object({
     sender_id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE),
     room_chat_id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE),
-    message: Joi.string().required().min(1).trim().strict()
+    message: Joi.string().required().min(1)
   })
   try {
     await schema.validateAsync(req.body)
@@ -28,7 +28,8 @@ const createMessage = async (req, res, next) => {
 }
 const removeMessageById = async (req, res, next) => {
   const schema = Joi.object({
-    id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)
+    id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE),
+    user_id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)
   })
   try {
     await schema.validateAsync(req.params)

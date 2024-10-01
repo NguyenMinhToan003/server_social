@@ -9,7 +9,7 @@ const IGNOREFIELD_CHAT_SUBMIT = []
 const SCHEMA_CHAT = Joi.object({
   sender_id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE),
   room_chat_id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE),
-  message: Joi.string().required().min(1).trim().strict(),
+  message: Joi.string().required().min(1),
   status: Joi.string().default('unread'),
   createdAt: Joi.date().timestamp().default(Date.now()),
   updatedAt: Joi.date().timestamp().default(null)
@@ -61,8 +61,12 @@ const createMessage = async (data) => {
     throw error
   }
 }
-const removeMessageById = async (id) => {
+const removeMessageById = async (id, user_id) => {
   try {
+    const message = await GET_DB().collection(CHAT_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
+    if (message.sender_id.toString() !== user_id) {
+      return null
+    }
     return await GET_DB().collection(CHAT_COLLECTION_NAME).updateOne(
       { _id: new ObjectId(id) },
       { $set: { status: 'deleted' } }

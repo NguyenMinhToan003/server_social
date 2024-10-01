@@ -170,6 +170,40 @@ const addFriend = async (id, friend_id) => {
     throw error
   }
 }
+const searchUserByListId = async (ids) => {
+  try {
+    let listUserMatch = await GET_DB().collection(USER_COLLECTION_NAME).aggregate(
+      [
+        {
+          $match: {
+            _id: { $in: ids.map(id => new ObjectId(id)) }
+          }
+        },
+        {
+          $project: {
+            'password': 0,
+            'posts': 0,
+            'room_chats': 0,
+            'createdAt': 0,
+            'updatedAt': 0
+          }
+        }
+      ]
+    ).toArray()
+    listUserMatch.forEach(user => {
+      Object.keys(user).forEach(item => {
+        if (IGNORGEFIELD_USER_SUBMIT.includes(item)) {
+          delete user[item]
+        }
+      })
+    })
+
+    return listUserMatch
+  }
+  catch (error) {
+    throw error
+  }
+}
 export const userModel = {
   IGNORGEFIELD_USER_CHANGE,
   IGNORGEFIELD_USER_SUBMIT,
@@ -182,5 +216,6 @@ export const userModel = {
   getListUser,
   getFriends,
   addFriend,
-  searchUser
+  searchUser,
+  searchUserByListId
 }

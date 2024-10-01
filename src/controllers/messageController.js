@@ -24,8 +24,8 @@ const createMessage = async (req, res, next) => {
 }
 const removeMessageById = async (req, res, next) => {
   try {
-    const { id } = req.params
-    const result = await messageService.removeMessageById(id)
+    const { id, user_id } = req.params
+    const result = await messageService.removeMessageById(id, user_id)
     if (result.error)
       return res.status(StatusCodes.BAD_REQUEST).json(result)
     return res.status(StatusCodes.OK).json(result)
