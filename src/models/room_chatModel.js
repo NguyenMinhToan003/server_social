@@ -5,8 +5,12 @@ import { OBJECT_ID_REGEX, OBJECT_ID_MESSAGE } from '~/utils/validation'
 import { messageModel } from '~/models/messageModel'
 const ROOM_CHAT_COLLECTION_NAME = 'room_chats'
 const SCHEMA_ROOM_CHAT = Joi.object({
+  // room_name string if type is private name is first member and second member
   room_name: Joi.string().required().min(3).max(255).trim().strict(),
   members: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).required(),
+  // default author and admin is first member
+  author: Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE).required(),
+  admins: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).required(),
   avatarRoom: Joi.string().trim().strict().default(''),
   // private is both member can chat, group is all member can chat
   type: Joi.string().valid('group', 'private').default('group'),
@@ -51,8 +55,9 @@ const checkMemberIsOnRoomChat = async (roomChatId, memberId) => {
 const createRoomChat = async (data) => {
   try {
     data = await validationDataRoomChat(data)
-
     data.members = data.members.map(member => new ObjectId(member))
+    data.author = new ObjectId(data.author)
+    data.admins = data.admins.map(admin => new ObjectId(admin))
     return await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).insertOne(data)
   }
   catch (error) {

@@ -5,7 +5,6 @@ const getRoomChat = async (req, res, next) => {
     id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE),
     user_id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)
   })
-
   try {
     await schema.validateAsync(req.params)
     next()
@@ -44,7 +43,7 @@ const removeRoomChat = async (req, res, next) => {
     id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE),
     user_id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)
   })
-  console.log(req.body)
+
   try {
     await schema.validateAsync(req.body)
     next()
