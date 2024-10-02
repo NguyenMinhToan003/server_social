@@ -23,8 +23,9 @@ const getRoomChat = async (id, userId) => {
 }
 const createRoomChat = async (data) => {
   try {
+    data.admins = [data.members[0]]
+    data.author = data.members[0]
     const room_chat = await room_chatModel.createRoomChat(data)
-
     return room_chat
   } catch (error) {
     throw error
