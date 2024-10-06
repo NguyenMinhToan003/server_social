@@ -131,13 +131,16 @@ const updateRoomChat = async (id, data) => {
     throw error
   }
 }
-const comfimInvite = async (id, userId) => {
+const comfimInvite = async (id, userId, message) => {
   try {
     const room_chat = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
     if (room_chat === null) return null
     const index = room_chat.invited.findIndex(invited => invited.equals(new ObjectId(userId)))
     if (index === -1) return null
-    room_chat.members.push(room_chat.invited[index])
+    if (message === 'accept') {
+      room_chat.members.push(new ObjectId(userId))
+      room_chat.members.push(room_chat.invited[index])
+    }
     room_chat.invited.splice(index, 1)
     await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).updateOne(
       { _id: new ObjectId(id) },
@@ -148,7 +151,7 @@ const comfimInvite = async (id, userId) => {
         }
       }
     )
-    return { redirect: room_chat._id }
+    return message === 'accept' ? { redirect: room_chat._id } : { info: 'rejected' }
   } catch (error) {
     throw error
   }

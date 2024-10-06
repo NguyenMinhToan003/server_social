@@ -84,7 +84,7 @@ const removeRoomChat = async (id, userId) => {
     throw error
   }
 }
-const comfimInvite = async (id, userId) => {
+const comfimInvite = async (id, userId, message) => {
   try {
     const room_chat = await room_chatModel.getRoomChatById(id)
     if (room_chat === null) return { error: 'Room chat not found' }
@@ -92,7 +92,7 @@ const comfimInvite = async (id, userId) => {
       return { info: 'You are already a member of this room' }
     }
     if (room_chat?.invited?.some(i => i.equals(new ObjectId(userId)))) {
-      return await room_chatModel.comfimInvite(id, userId)
+      return await room_chatModel.comfimInvite(id, userId, message)
     }
     else {
       return { error: 'You are not invited to this room' }
