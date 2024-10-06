@@ -57,10 +57,10 @@ const comfimInvite = async (req, res, next) => {
     id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)
   })
   const schemaBody = Joi.object({
-    user_id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)
+    user_id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE),
+    message: Joi.string().valid('accept', 'reject').required()
   })
   try {
-    console.log(req.params, req.body)
     await schemaParam.validateAsync(req.params)
     await schemaBody.validateAsync(req.body)
     next()
