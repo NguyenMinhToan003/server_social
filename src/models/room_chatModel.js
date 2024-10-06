@@ -8,6 +8,7 @@ const SCHEMA_ROOM_CHAT = Joi.object({
   // room_name string if type is private name is first member and second member
   room_name: Joi.string().required().min(3).max(255).trim().strict(),
   members: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).required(),
+  invited: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).default([]),
   // default author and admin is first member
   author: Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE).required(),
   admins: Joi.array().items(Joi.string().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)).required(),
@@ -57,6 +58,7 @@ const createRoomChat = async (data) => {
     data = await validationDataRoomChat(data)
     data.members = data.members.map(member => new ObjectId(member))
     data.author = new ObjectId(data.author)
+    data.invited = data.invited.map(invited => new ObjectId(invited))
     data.admins = data.admins.map(admin => new ObjectId(admin))
     return await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).insertOne(data)
   }
@@ -84,6 +86,14 @@ const getListRoomChat = async (userId) => {
         {
           members: { $all: [new ObjectId(userId)] },
           isRemove: false
+        }
+      },
+      {
+        $lookup: {
+          from: messageModel.CHAT_COLLECTION_NAME,
+          localField: '_id',
+          foreignField: 'room_chat_id',
+          as: 'lastMessage'
         }
       }
     ]).toArray()
@@ -121,6 +131,28 @@ const updateRoomChat = async (id, data) => {
     throw error
   }
 }
+const comfimInvite = async (id, userId) => {
+  try {
+    const room_chat = await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).findOne({ _id: new ObjectId(id) })
+    if (room_chat === null) return null
+    const index = room_chat.invited.findIndex(invited => invited.equals(new ObjectId(userId)))
+    if (index === -1) return null
+    room_chat.members.push(room_chat.invited[index])
+    room_chat.invited.splice(index, 1)
+    await GET_DB().collection(ROOM_CHAT_COLLECTION_NAME).updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          members: room_chat.members,
+          invited: room_chat.invited
+        }
+      }
+    )
+    return { redirect: room_chat._id }
+  } catch (error) {
+    throw error
+  }
+}
 export const room_chatModel = {
   SCHEMA_ROOM_CHAT,
   updateRoomChat,
@@ -129,5 +161,6 @@ export const room_chatModel = {
   checkMemberIsOnRoomChat,
   findRoomChatPrivateBothMember,
   getListRoomChat,
-  removeRoomChat
+  removeRoomChat,
+  comfimInvite
 }

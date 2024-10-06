@@ -55,6 +55,11 @@ const START_SERVER = () => {
         onlineUsers.splice(index, 1)
       }
     })
+    socket.on('create-room-chat', (roomchat) => {
+      roomchat.members.forEach(member => {
+        socket.to(member).emit('create-room-chat', { roomChatId: roomchat.roomChatId })
+      })
+    })
     socket.on('typing', (data) => {
       console.log('Typing:', data)
       typingUsers.push(data)
