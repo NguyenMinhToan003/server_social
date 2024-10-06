@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb'
 import { room_chatModel } from '~/models/room_chatModel'
 import { userModel } from '~/models/userModel'
 import { messageService } from '~/services/messageService'
@@ -25,6 +26,10 @@ const createRoomChat = async (data) => {
   try {
     data.admins = [data.members[0]]
     data.author = data.members[0]
+    if (data.type === 'group') {
+      data.invited = data.members.splice(1)
+      data.members = data.members[0].split(' ')
+    }
     const room_chat = await room_chatModel.createRoomChat(data)
     return room_chat
   } catch (error) {
@@ -79,10 +84,30 @@ const removeRoomChat = async (id, userId) => {
     throw error
   }
 }
+const comfimInvite = async (id, userId) => {
+  try {
+    const room_chat = await room_chatModel.getRoomChatById(id)
+    if (room_chat === null) return { error: 'Room chat not found' }
+    if (room_chat?.members?.some(i => i.equals(new ObjectId(userId)))) {
+      return { info: 'You are already a member of this room' }
+    }
+    if (room_chat?.invited?.some(i => i.equals(new ObjectId(userId)))) {
+      return await room_chatModel.comfimInvite(id, userId)
+    }
+    else {
+      return { error: 'You are not invited to this room' }
+    }
+  }
+  catch (error) {
+    throw error
+  }
+}
+
 export const room_chatSevice = {
   getRoomChat,
   createRoomChat,
   getListRoomChat,
   findOrCreateRoomChatBothMember,
-  removeRoomChat
+  removeRoomChat,
+  comfimInvite
 }

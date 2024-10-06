@@ -52,9 +52,27 @@ const removeRoomChat = async (req, res, next) => {
     next(error)
   }
 }
+const comfimInvite = async (req, res, next) => {
+  const schemaParam = Joi.object({
+    id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)
+  })
+  const schemaBody = Joi.object({
+    user_id: Joi.string().required().trim().strict().pattern(OBJECT_ID_REGEX).message(OBJECT_ID_MESSAGE)
+  })
+  try {
+    console.log(req.params, req.body)
+    await schemaParam.validateAsync(req.params)
+    await schemaBody.validateAsync(req.body)
+    next()
+  }
+  catch (error) {
+    next(error)
+  }
+}
 export const room_chatValidation = {
   getRoomChat,
   createRoomChat,
   getListRoomChat,
-  removeRoomChat
+  removeRoomChat,
+  comfimInvite
 }

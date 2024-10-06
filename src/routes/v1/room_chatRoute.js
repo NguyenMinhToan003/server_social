@@ -10,4 +10,6 @@ Router.route('/:id&&:user_id')
   .get(room_chatValidation.getRoomChat, room_chatController.getRoomChat)
 Router.route('/listRoomChats/:id')
   .get(room_chatValidation.getListRoomChat, room_chatController.getListRoomChat)
+Router.route('/comfimInvite/:id')
+  .post(room_chatValidation.comfimInvite, room_chatController.comfimInvite)
 export const room_chatRoute = Router
