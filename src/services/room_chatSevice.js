@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb'
+import { notificationModel } from '~/models/notificationModel'
 import { room_chatModel } from '~/models/room_chatModel'
 import { userModel } from '~/models/userModel'
 import { messageService } from '~/services/messageService'
@@ -30,7 +31,18 @@ const createRoomChat = async (data) => {
       data.invited = data.members.splice(1)
       data.members = data.members[0].split(' ')
     }
+    console.log('invide', data.invited)
     const room_chat = await room_chatModel.createRoomChat(data)
+    const lsNotify = data.invited.map(async item => {
+
+      await notificationModel.createNotification({
+        sender_user_id: data.author,
+        receiver_user_id: item,
+        action: room_chat._id,
+        content: `You have been invited to join the room ${data.room_name}`,
+        type: 'invite'
+      })
+    })
     return room_chat
   } catch (error) {
     throw error
